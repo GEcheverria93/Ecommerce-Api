@@ -19,4 +19,14 @@ const getAllProducts = (req, res) => {
     return res.json(products);
 };
 
-module.exports = { readProducts, getAllProducts };
+const getProduct = (req, res) => {
+    const { pid } = req.params;
+    const products = readProducts();
+    const product = products.find((p) => p.id === Number(pid));
+    if (!product) {
+        return res.status(404).json({ message: 'producto no encontrado' });
+    }
+    return res.json(product);
+};
+
+module.exports = { readProducts, getAllProducts, getProduct };

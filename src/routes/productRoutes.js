@@ -1,16 +1,11 @@
 const express = require('express');
-const { getAllProducts } = require('../services/productService');
+const { getAllProducts, getProduct } = require('../services/productService');
 
 const router = express.Router();
 
 router.get('/', getAllProducts);
 
-router.get('/:pid', (req, res) => {
-    const { pid } = req.params;
-    res.json({
-        message: `obtener el producto con id ${pid}`,
-    });
-});
+router.get('/:pid', getProduct);
 
 router.post('/', (req, res) => {
     const {

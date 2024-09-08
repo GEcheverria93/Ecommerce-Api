@@ -9,6 +9,13 @@ const readProducts = () => {
     return JSON.parse(data);
 };
 
+const writeProducts = (products) => {
+    fS.writeFileSync(productsFilePath, JSON.stringify(products, null, 2));
+};
+
+const generateNewProductId = (products) =>
+    Math.max(...products.map((p) => Number(p.id)), 0) + 1;
+
 const getAllProducts = (req, res) => {
     const products = readProducts();
     const limit = parseInt(req.query.limit, 10);
@@ -29,4 +36,54 @@ const getProduct = (req, res) => {
     return res.json(product);
 };
 
-module.exports = { readProducts, getAllProducts, getProduct };
+const addNewProduct = (req, res) => {
+    const products = readProducts();
+    const {
+        title,
+        description,
+        code,
+        price,
+        status,
+        stock,
+        category,
+        thumbnails,
+    } = req.body;
+    const newProduct = {
+        id: generateNewProductId(products),
+        title,
+        description,
+        code,
+        price,
+        status: status ?? true,
+        stock,
+        category,
+        thumbnails,
+    };
+
+    // Validación de campos obligatorios
+    if (
+        !newProduct.title ||
+        !newProduct.description ||
+        !newProduct.code ||
+        newProduct.price == null ||
+        newProduct.stock == null ||
+        !newProduct.category
+    ) {
+        return res.status(400).json({
+            message: 'Todos los campos excepto thumbnails son obligatorios',
+        });
+    }
+    products.push(newProduct);
+    writeProducts(products);
+
+    return res.status(201).json(newProduct);
+};
+
+module.exports = {
+    readProducts,
+    getAllProducts,
+    getProduct,
+    addNewProduct,
+    writeProducts,
+    generateNewProductId,
+};

@@ -4,6 +4,7 @@ const {
     getProduct,
     addNewProduct,
     updateProduct,
+    deleteProduct,
 } = require('../services/productService');
 
 const router = express.Router();
@@ -16,11 +17,6 @@ router.post('/', addNewProduct);
 
 router.put('/:pid', updateProduct);
 
-router.delete('/:pid', (req, res) => {
-    const { pid } = req.params;
-    res.json({
-        message: `eliminar el producto con id ${pid}`,
-    });
-});
+router.delete('/:pid', deleteProduct);
 
 module.exports = router;

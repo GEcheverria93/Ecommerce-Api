@@ -97,6 +97,19 @@ const updateProduct = (req, res) => {
     writeProducts(products);
     return res.json(updatedProduct);
 };
+
+const deleteProduct = (req, res) => {
+    const { pid } = req.params;
+    const products = readProducts();
+    const filteredProducts = products.filter((p) => p.id !== Number(pid));
+
+    if (filteredProducts.length === products.length) {
+        return res.status(404).json({ message: 'producto no encontrado' });
+    }
+    writeProducts(filteredProducts);
+    return res.status(204).send();
+};
+
 module.exports = {
     readProducts,
     getAllProducts,
@@ -105,4 +118,5 @@ module.exports = {
     writeProducts,
     generateNewProductId,
     updateProduct,
+    deleteProduct,
 };

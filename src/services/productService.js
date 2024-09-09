@@ -1,3 +1,4 @@
+/* eslint-disable node/no-unsupported-features/es-syntax */
 const fS = require('fs');
 const path = require('path');
 
@@ -79,6 +80,23 @@ const addNewProduct = (req, res) => {
     return res.status(201).json(newProduct);
 };
 
+const updateProduct = (req, res) => {
+    const { pid } = req.params;
+    const products = readProducts();
+    const index = products.findIndex((p) => p.id === Number(pid));
+    if (index === -1) {
+        return res.status(404).json({ message: 'producto no encontrado' });
+    }
+    const updatedProduct = {
+        ...products[index],
+        ...req.body,
+        id: products[index].id,
+    };
+
+    products[index] = updatedProduct;
+    writeProducts(products);
+    return res.json(updatedProduct);
+};
 module.exports = {
     readProducts,
     getAllProducts,
@@ -86,4 +104,5 @@ module.exports = {
     addNewProduct,
     writeProducts,
     generateNewProductId,
+    updateProduct,
 };

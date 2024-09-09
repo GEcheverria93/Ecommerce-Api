@@ -1,6 +1,7 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
 const fS = require('fs');
 const path = require('path');
+const { readProducts } = require('./productService');
 
 const cartsFilePath = path.join(__dirname, '../data/carts.json');
 
@@ -38,10 +39,33 @@ const getProductsByCartId = (req, res) => {
     return res.json(cart.products);
 };
 
+const addProductToCart = (req, res) => {
+    const { cid, pid } = req.params;
+    const carts = readCarts();
+    const products = readProducts();
+    const cart = carts.find((c) => c.id === Number(cid));
+    if (!cart) {
+        return res.status(404).json({ message: 'carrito no encontrado' });
+    }
+    const product = products.find((p) => p.id === Number(pid));
+    if (!product) {
+        return res.status(404).json({ message: 'producto no encontrado' });
+    }
+    const cartProduct = cart.products.find((p) => p.product === Number(pid));
+    if (cartProduct) {
+        cartProduct.quantity += 1;
+    } else {
+        cart.products.push({ product: Number(pid), quantity: 1 });
+    }
+    writeCarts(carts);
+    return res.status(201).json(cart);
+};
+
 module.exports = {
     readCarts,
     writeCarts,
     generateNewCartId,
     addNewCart,
     getProductsByCartId,
+    addProductToCart,
 };

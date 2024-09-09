@@ -1,14 +1,11 @@
 const express = require('express');
+const { addNewCart, getProductsByCartId } = require('../services/cartService');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-    const { products } = req.body;
-    res.json({
-        message: 'agregar un nuevo carrito con los siguientes valores',
-        valuesToAdd: products,
-    });
-});
+router.post('/', addNewCart);
+
+router.get('/:cid', getProductsByCartId);
 
 router.post('/:cid/product/:pid', (req, res) => {
     const { cid, pid } = req.params;
